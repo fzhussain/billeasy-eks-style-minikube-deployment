@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: application
+resources:
+  - ../../base
+
+namePrefix: prod-
+
+patches:
+  - target:
+      kind: Ingress
+      name: gateway-ingress
+    path: gateway/ingress-host-patch.yaml
+  - target:
+      kind: Deployment
+      name: gateway
+    path: gateway/replica-patch.yaml
+  - target:
+      kind: Deployment
+      name: auth-service
+    path: auth-service/replica-patch.yaml
+  - target:
+      kind: Deployment
+      name: data-service
+    path: data-service/replica-patch.yaml
