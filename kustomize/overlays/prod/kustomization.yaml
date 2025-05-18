@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: application
 resources:
   - ../../base
 
@@ -9,18 +8,14 @@ namePrefix: prod-
 
 patches:
   - target:
-      kind: Ingress
-      name: gateway-ingress
-    path: gateway/ingress-host-patch.yaml
-  - target:
       kind: Deployment
-      name: gateway
+      name: faraz-gateway-deploy
     path: gateway/replica-patch.yaml
   - target:
       kind: Deployment
-      name: auth-service
+      name: faraz-auth-service-deploy
     path: auth-service/replica-patch.yaml
   - target:
       kind: Deployment
-      name: data-service
+      name: faraz-data-service-deploy
     path: data-service/replica-patch.yaml

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: faraz-auth-service
+  name: faraz-auth-service-deploy
   namespace: system
 spec:
   replicas: 1
