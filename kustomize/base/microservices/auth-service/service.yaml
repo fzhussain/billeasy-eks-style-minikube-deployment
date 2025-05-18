@@ -5,9 +5,9 @@ metadata:
   namespace: system
 spec:
   selector:
-    app: auth-service
+    app: faraz-auth-service
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: ClusterIP
+  type: NodePort
