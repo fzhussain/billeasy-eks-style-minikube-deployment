@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: faraz-data-service-svc
+  namespace: system
+spec:
+  selector:
+    app: faraz-data-service
+  ports:
+    - protocol: TCP
+      port: 5678
+      targetPort: 5678
+  type: ClusterIP

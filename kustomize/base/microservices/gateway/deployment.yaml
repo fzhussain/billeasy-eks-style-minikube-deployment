@@ -4,7 +4,7 @@ metadata:
   name: faraz-gateway-deploy
   namespace: application
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: faraz-gateway

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faraz-auth-service
+  namespace: system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: faraz-auth-service
+  template:
+    metadata:
+      labels:
+        app: faraz-auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: kennethreitz/httpbin
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

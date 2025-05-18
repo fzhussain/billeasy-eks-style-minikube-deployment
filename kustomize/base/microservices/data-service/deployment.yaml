@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faraz-data-service-deploy
+  namespace: system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: faraz-data-service
+  template:
+    metadata:
+      labels:
+        app: faraz-data-service
+    spec:
+      containers:
+        - name: data-service
+          image: hashicorp/http-echo
+          args:
+            - "-text=Hello Faraz from Data Service"
+          ports:
+            - containerPort: 5678
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5678
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5678
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
