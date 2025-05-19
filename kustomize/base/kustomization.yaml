@@ -7,3 +7,5 @@ resources:
   - microservices/gateway
   - microservices/auth-service
   - microservices/data-service
+  - secrets/minio-credentials.yaml
+  - service-accounts/data-service-service-account.yaml
