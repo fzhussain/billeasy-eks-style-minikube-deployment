@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faraz-auth-service-deploy
+spec:
+  template:
+    spec:
+      containers:
+      - name: debug-tools
+        image: alpine:3.21
+        command: ["sleep", "3600"]

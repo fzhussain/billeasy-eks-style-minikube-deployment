@@ -17,5 +17,13 @@ patches:
     path: auth-service/replica-patch.yaml
   - target:
       kind: Deployment
+      name: faraz-auth-service-deploy
+    path: auth-service/debug-sidecar-patch.yaml
+  - target:
+      kind: Deployment
       name: faraz-data-service-deploy
     path: data-service/replica-patch.yaml
+  - target:
+      kind: Deployment
+      name: faraz-data-service-deploy
+    path: data-service/debug-sidecar-patch.yaml
