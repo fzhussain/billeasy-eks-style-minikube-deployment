@@ -27,7 +27,3 @@ patches:
       kind: Deployment
       name: faraz-data-service-deploy
     path: data-service/debug-sidecar-patch.yaml
-  # - target:
-  #     kind: Deployment
-  #     name: faraz-data-service-deploy
-  #   path: data-service/service-account-patch.yaml
