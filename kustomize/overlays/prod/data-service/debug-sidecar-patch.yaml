@@ -9,3 +9,6 @@ spec:
       - name: debug-tools
         image: alpine:3.21
         command: ["sleep", "3600"]
+        envFrom:
+          - secretRef:
+              name: faraz-minio-credentials

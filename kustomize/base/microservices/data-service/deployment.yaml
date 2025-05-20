@@ -13,8 +13,12 @@ spec:
       labels:
         app: faraz-data-service
     spec:
+      serviceAccountName: faraz-data-service-sa
       containers:
         - name: data-service
+          envFrom:
+            - secretRef:
+                name: faraz-minio-credentials     
           image: hashicorp/http-echo
           args:
             - "-text=Hello Faraz from Data Service"
