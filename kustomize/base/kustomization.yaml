@@ -9,3 +9,7 @@ resources:
   - microservices/data-service
   - secrets/minio-credentials.yaml
   - service-accounts/data-service-service-account.yaml
+  - service-accounts/auth-service-service-account.yaml
+  - rbac/minio-secret-reader-role.yaml
+  - rbac/minio-secret-reader-role-binding.yaml
+  # - clusterpolicies/restrict-secret-mount-to-data-service.yaml
