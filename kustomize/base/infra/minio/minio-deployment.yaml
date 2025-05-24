@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faraz-minio
+  namespace: minio-storage
+  labels:
+    app: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: docker.io/bitnami/minio:2025.4.22-debian-12-r1
+        env:
+          - name: MINIO_ROOT_USER
+            value: "faraz-minioadmin"
+          - name: MINIO_ROOT_PASSWORD
+            value: "faraz-minioadmin-pass"
+        ports:
+          - containerPort: 9000
+          - containerPort: 9001

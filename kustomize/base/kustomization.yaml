@@ -4,12 +4,15 @@ kind: Kustomization
 resources:
   - namespaces/system-namespace.yaml
   - namespaces/application-namespace.yaml
+  - namespaces/minio-namespace.yaml
+  - infra/minio/minio-deployment.yaml
+  - infra/minio/minio-service.yaml
+  - network-policies/minio-access-policy.yaml
   - microservices/gateway
   - microservices/auth-service
   - microservices/data-service
-  - secrets/minio-credentials.yaml
+  - secrets/minio-credentials-system-ns.yaml
   - service-accounts/data-service-service-account.yaml
   - service-accounts/auth-service-service-account.yaml
   - rbac/minio-secret-reader-role.yaml
   - rbac/minio-secret-reader-role-binding.yaml
-  # - clusterpolicies/restrict-secret-mount-to-data-service.yaml
