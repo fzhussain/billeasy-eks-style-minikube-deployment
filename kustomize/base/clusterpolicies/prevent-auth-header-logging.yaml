@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-auth-header-logging
+  annotations:
+    policies.kyverno.io/title: Block Authorization Header Logging
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: high
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+  - name: check-for-auth-header-pattern
+    match:
+      any:
+      - resources:
+          kinds:
+          - Deployment
+    validate:
+      message: "Authorization header logging detected. Remove '%({Authorization}i)s' pattern from environment variables."
+      cel:
+        expressions:
+        - expression: >
+            !object.spec.template.spec.containers.exists(container,
+              container.?env.orValue([]).exists(envVar,
+                envVar.?value.orValue('').contains('%({Authorization}i)s')
+              )
+            )
+        - expression: "true"
