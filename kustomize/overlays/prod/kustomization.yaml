@@ -31,3 +31,7 @@ patches:
       kind: Deployment
       name: faraz-auth-service-deploy
     path: auth-service/service-account-patch.yaml
+  - target:
+      kind: Deployment
+      name: faraz-auth-service-deploy
+    path: auth-service/logger-patch.yaml
