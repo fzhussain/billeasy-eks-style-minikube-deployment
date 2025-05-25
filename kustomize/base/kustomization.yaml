@@ -8,6 +8,7 @@ resources:
   - infra/minio/minio-deployment.yaml
   - infra/minio/minio-service.yaml
   - network-policies/minio-access-policy.yaml
+  - network-policies/auth-to-data-only.yaml
   - microservices/gateway
   - microservices/auth-service
   - microservices/data-service

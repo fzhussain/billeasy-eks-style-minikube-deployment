@@ -12,4 +12,5 @@ spec:
           args: ["-b", "0.0.0.0:80", "httpbin:app"]
           env:
             - name: GUNICORN_CMD_ARGS
-              value: "--log-level debug --access-logfile - --access-logformat '%(h)s %(l)s %(u)s %(t)s \"%(r)s\" %(s)s %(b)s \"AUTH_HEADER: %({Authorization}i)s\"'"
+              # value: "--log-level debug --access-logfile - --access-logformat '%(h)s %(l)s %(u)s %(t)s \"%(r)s\" %(s)s %(b)s \"AUTH_HEADER: %({Authorization}i)s\"'"
+              value: "--log-level debug --access-logfile - --access-logformat '%(h)s %(l)s %(u)s %(t)s \"%(r)s\" %(s)s %(b)s \"AUTH_HEADER: [redacted]\"'"  # Fix to not display Autherization headers
