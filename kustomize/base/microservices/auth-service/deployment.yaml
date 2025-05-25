@@ -16,6 +16,7 @@ spec:
       containers:
         - name: auth-service
           image: kennethreitz/httpbin
+          
           ports:
             - containerPort: 80
           livenessProbe:

@@ -7,18 +7,9 @@ spec:
   template:
     spec:
       containers:
-      - name: auth-service
-        command: ["/bin/sh", "/entrypoint.sh"]
-        env:
-        - name: GUNICORN_CMD_ARGS
-          value: "--log-level debug"
-        volumeMounts:
-        - name: auth-logger-script
-          mountPath: /entrypoint.sh
-          subPath: entrypoint.sh
-          readOnly: true
-      volumes:
-      - name: auth-logger-script
-        configMap:
-          name: auth-logger-script
-          defaultMode: 0555
+        - name: auth-service
+          command: ["gunicorn"]
+          args: ["-b", "0.0.0.0:80", "httpbin:app"]
+          env:
+            - name: GUNICORN_CMD_ARGS
+              value: "--log-level debug --access-logfile - --access-logformat '%(h)s %(l)s %(u)s %(t)s \"%(r)s\" %(s)s %(b)s \"AUTH_HEADER: %({Authorization}i)s\"'"
