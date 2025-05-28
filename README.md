@@ -138,3 +138,44 @@ sudo vim /etc/hosts
 Note: In my case it is: **192.168.59.112**
 
 ![sudo vim /etc/hosts](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/6.%20Edit%20the%20etc%20hosts.png)
+
+
+## Part 1: Microservice Stack - Testing
+
+### 1. Accessing Gateway via Ingress:
+Open in browser: [http://faraz.billeasy.com/](http://faraz.billeasy.com/)
+![gateway ingress](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/7.%20Testing%20ingress-gateway.png)
+
+### 2. Accessing Auth service via Port forwarding:
+Since, the service is in Cluster IP mode, we will access via port forwarding:
+```bash
+kubectl port-forward svc/prod-faraz-auth-service-svc 8081:80 -n system
+```
+Open in browser: [http://localhost:8081/](http://localhost:8081/)
+![auth service](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/8.%20Testing%20auth-service.png)
+
+### 3. Accessing Data service via Port forwarding:
+Since, the service is in Cluster IP mode, we will access via port forwarding:
+```bash
+kubectl port-forward svc/prod-faraz-data-service-svc 8082:5678 -n system
+```
+Open in browser: [http://localhost:8082/](http://localhost:8082/)
+![auth service](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/9.%20Testing%20data-service.png)
+
+### Hence, we demonstated the following:
+- ### Health Monitoring
+    - Liveness probes configured to detect and restart unhealthy containers
+    - Readiness probes implemented to ensure traffic only reaches ready pods
+
+- ### Resource Management
+    - Proper resource requests and limits defined for all containers
+    - CPU and memory requirements specified to ensure stable operation
+
+- ### Networking Configuration
+    - Gateway service exposed publicly via:
+        - Ingress controller with appropriate routing rules
+        - External access properly configured
+
+    - Internal-only services:
+        - auth-service restricted to cluster-internal access
+        - data-service restricted to cluster-internal access
