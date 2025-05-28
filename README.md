@@ -285,3 +285,8 @@ kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c deb
 This is because the network policy (prod/dev)allow-only-data-service allows only data service to communicate to minio pods.
 
 ### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
+
+NOTE for future improvements: 
+- We can improve security by creating users (non-admin/root) and access via user/service account.
+- We should implement bucket policies. (Current Requirement)
+- Implement only data-service to mount credentials.
