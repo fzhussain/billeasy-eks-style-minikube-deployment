@@ -135,4 +135,5 @@ kubectl get ingress -n application
 sudo vim /etc/hosts
 ```
 #### Make sure you add proper minikube IP to /etc/hosts
+- In my case it is: 192.168.59.112
 ![sudo vim /etc/hosts](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/6.%20Edit%20the%20etc%20hosts.png)
