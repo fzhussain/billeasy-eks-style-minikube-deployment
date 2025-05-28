@@ -33,13 +33,11 @@ Install the following tools:
 ```bash
 minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --cni calico --no-vtx-check
 ```
-![Project setup](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.2.%20minikube%20start)
+![Project setup](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.3.%20minikube%20start.png)
 
 #### Cluster Verification
 ```bash
 kubectl get nodes
-kubectl get all -A
 ```
 
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.4.1%20kubectl%20get%20nodes.png)
-![kubectl get all -A](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.5.%20kubectl%20get%20all%20-A.png)
