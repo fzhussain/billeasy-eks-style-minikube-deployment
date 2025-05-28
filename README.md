@@ -93,7 +93,7 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
 │   │   │   ├── auth-service-service-account.yaml
 │   │   │   └── data-service-service-account.yaml
 │   │   └── kustomization.yaml
-│
+│   |
 │   └── overlays
 │       ├── dev
 │       │   ├── auth-service
