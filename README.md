@@ -358,6 +358,7 @@ helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
 ![Install kyverno](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/26.%20Install%20kyverno.png)
 
 - Verify install:
+  
 ![verify kyverno install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/27.%20Verify%20install.png)
 
 - Create and apply the cluster policy:
