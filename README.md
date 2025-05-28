@@ -200,3 +200,88 @@ Open in browser: [http://localhost:9001/](http://localhost:9001/)
 ```bash
 kubectl port-forward service/prod-faraz-minio -n minio-storage 9000:9000
 ```
+
+### Verify RBAC
+```bash
+kubectl get secrets -n system
+kubectl get sa -n system
+```
+Test for data service service account:
+```bash
+kubectl auth can-i get secrets/prod-faraz-minio-credentials --as=system:serviceaccount:system:prod-faraz-data-service-sa -n system
+```
+Test for auth service service account:
+```bash
+kubectl auth can-i get secrets/prod-faraz-minio-credentials --as=system:serviceaccount:system:prod-faraz-auth-service-sa -n system
+```
+
+![verify RBAC](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/13.%20Verifying%20RBAC.png)
+
+### Creating bucket from UI and testing access 
+- Create bucket
+![create bucket](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/12.%20Create%20a%20bucket%20from%20UI.png)
+
+- Now, we will simulate a scenario where maliciously auth service via a patch is able to mount environment variables:
+```bash
+kubectl describe pod -n system prod-faraz-auth-service-deploy-5dd5c7fcb7-6qnxm
+```
+
+![auth service credentials mount](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/14.%20auth-service%20mounted%20minio%20credentials.png)
+
+- Data service has it's minio credentials mounted:
+```bash
+kubectl describe pod -n system prod-faraz-data-service-deploy-65b58dcfb-p8jfq
+```
+
+![data service credentials mount](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/15.%20data-service%20mounted%20minio%20credentials.png)
+
+- Temporarily disable the egress, so auth service can fetch curl and minio-client:
+```bash
+kubectl get netpol -A
+kubectl delete netpol prod-allow-auth-to-data-only -n system
+```
+![auth service egress disable](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/16.%20Temporarily%20disabling%20egress%20for%20auth-service.png)
+
+
+- Installing minio client on auth and data service pods:
+```bash
+kubectl exec -it prod-faraz-auth-service-deploy-5dd5c7fcb7-6qnxm -n system -c debug-tools -- sh -c "apk add curl && wget https://dl.min.io/client/mc/release/linux-amd64/mc && chmod +x mc"
+```
+```bash
+kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c debug-tools -- sh -c "apk add curl && wget https://dl.min.io/client/mc/release/linux-amd64/mc && chmod +x mc"
+```
+
+![Install minio client on both the pods](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/17.%20Installing%20mc%20client%20and%20curl%20to%20auth%20and%20data%20service%20pods.png)
+
+
+- As you can see that we have deliberatly mounted the MINIO credentials:
+```bash
+kubectl exec -it prod-faraz-auth-service-deploy-5dd5c7fcb7-6qnxm -n system -c debug-tools -- sh -c "env | grep MINIO_"
+
+kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c debug-tools -- sh -c "env | grep MINIO_"
+```
+
+![minio cred mounts on pods](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/18.Minio%20credentials%20access%20to%20auth%20and%20data%20service.png)
+
+- Testing if auth-service and data-service is able to access minio and list the buckets:
+
+    - If you try to access Minio from data-service, we will be successfull:
+
+```bash
+kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c debug-tools -- sh -c "./mc alias set faraz-minio http://prod-faraz-minio.minio-storage.svc.cluster.local:9000 \$MINIO_ACCESS_KEY \$MINIO_SECRET_KEY"
+
+kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c debug-tools -- sh -c "./mc ls faraz-minio"
+
+```
+
+-  But now if you try to access via auth-service, it will fail:
+
+```bash
+ kubectl exec -it prod-faraz-auth-service-deploy-5dd5c7fcb7-6qnxm -n system -c debug-tools -- sh -c "./mc alias set faraz-minio http://prod-faraz-minio.minio-storage.svc.cluster.local:9000 \$MINIO_ACCESS_KEY \$MINIO_SECRET_KEY"
+```
+
+![minio cred mounts on pods](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/19.%20Network%20policy%20blocked%20auth-service%20to%20access%20minio.png)
+
+This is because the network policy (prod/dev)allow-only-data-service allows only data service to communicate to minio pods.
+
+### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
