@@ -162,7 +162,7 @@ kubectl port-forward svc/prod-faraz-data-service-svc 8082:5678 -n system
 Open in browser: [http://localhost:8082/](http://localhost:8082/)
 ![auth service](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/9.%20Testing%20data-service.png)
 
-### Hence, we demonstated the following:
+### Hence we demonstated the following:
 - ### Health Monitoring
     - Liveness probes configured to detect and restart unhealthy containers
     - Readiness probes implemented to ensure traffic only reaches ready pods
@@ -179,3 +179,24 @@ Open in browser: [http://localhost:8082/](http://localhost:8082/)
     - Internal-only services:
         - auth-service restricted to cluster-internal access
         - data-service restricted to cluster-internal access
+
+## Part 2: Simulate IAM with MinIO
+
+We already have our minio deployment and service created when we applied the kustomize/overlay/prod 
+- Verify once again:
+```bash
+kubectl get all -n minio-storage
+```
+![kubectl get all -n minio-storage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/10.kubectl%20get%20all%20-n%20minio-storage.png)
+
+- For Minio UI:
+```bash
+kubectl port-forward service/prod-faraz-minio -n minio-storage 9001:9001
+```
+Open in browser: [http://localhost:9001/](http://localhost:9001/)
+![minio UI](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/11.%20Minio%20UI%20localhost.9001.png)
+
+- For Minio CLI:
+```bash
+kubectl port-forward service/prod-faraz-minio -n minio-storage 9000:9000
+```
