@@ -317,10 +317,10 @@ kubectl logs -l app=faraz-auth-service -n system | grep Bearer
 
 ![Auth leak demo](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/21.%20Auth%20header%20leak%20in%20logs.png)
 
-    - To solve this, we can manually remove the Auth headers from deployment:
+- To solve this, we can manually remove the Auth headers from deployment:
 ![Auth leak manual solved](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/23.%20Manually%20solve%20auth%20header%20leaks.png)
 
-    - And after re-applying the changes, this auth leak was solved:
+- And after re-applying the changes, this auth leak was solved:
 ![Auth leak manual solved test](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/24.%20Manually%20redacting%20auth%20header%20leaks.png)
 
 
