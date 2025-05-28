@@ -49,6 +49,8 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
 ```
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
 
+## Project Structure
+
 ```
 .
 ├── README.md
