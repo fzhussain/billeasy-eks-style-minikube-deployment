@@ -31,9 +31,9 @@ Install the following tools:
 ## Minikube Cluster Initialization
 
 ```bash
-minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --no-vtx-check
+minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --cni calico --no-vtx-check
 ```
-![Project setup](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.2.%20minikube%20start%20--driver%3Dvirtualbox%20--cpus%3D4%20--memory%3D8192%20--addons%3Dingress%2Cmetrics-server%20--no-vtx-check.png)
+![Project setup](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/0.2.%20minikube%20start)
 
 #### Cluster Verification
 ```bash
