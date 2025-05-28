@@ -41,3 +41,10 @@ kubectl get nodes
 ```
 
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/2.%20kubectl%20get%20all.png)
+
+
+## Clone the repository
+```bash
+git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.git
+```
+![ls -lrt](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
