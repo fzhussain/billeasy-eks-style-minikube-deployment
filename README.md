@@ -41,3 +41,80 @@ kubectl get nodes
 ```
 
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/2.%20kubectl%20get%20all.png)
+
+
+## Clone the repository
+```bash
+git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.git
+```
+![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
+
+## Project Structure
+
+```
+.
+├── README.md
+├── kustomize
+│   ├── base
+│   │   ├── clusterpolicies
+│   │   │   └── prevent-auth-header-logging.yaml
+│   │   ├── infra
+│   │   │   └── minio
+│   │   │       ├── minio-deployment.yaml
+│   │   │       └── minio-service.yaml
+│   │   ├── microservice
+│   │   │   ├── auth-service
+│   │   │   │   ├── deployment.yaml
+│   │   │   │   ├── service.yaml
+│   │   │   │   └── kustomization.yaml
+│   │   │   ├── data-service
+│   │   │   │   ├── deployment.yaml
+│   │   │   │   ├── service.yaml
+│   │   │   │   └── kustomization.yaml
+│   │   │   └── gateway
+│   │   │       ├── deployment.yaml
+│   │   │       ├── service.yaml
+│   │   │       ├── ingress.yaml
+│   │   │       └── kustomization.yaml
+│   │   ├── network-policies
+│   │   │   ├── auth-to-data-only.yaml
+│   │   │   ├── default-deny-all.yaml
+│   │   │   └── minio-access-policy.yaml
+│   │   ├── namespaces
+│   │   │   ├── application-namespace.yaml
+│   │   │   ├── minio-namespace.yaml
+│   │   │   └── system-namespace.yaml
+│   │   ├── rbac
+│   │   │   ├── minio-secret-reader-role.yaml
+│   │   │   └── minio-secret-reader-role-binding.yaml
+│   │   ├── secrets
+│   │   │   └── minio-credentials-system-ns.yaml
+│   │   ├── serviceaccounts
+│   │   │   ├── auth-service-service-account.yaml
+│   │   │   └── data-service-service-account.yaml
+│   │   └── kustomization.yaml
+│   |
+│   └── overlays
+│       ├── dev
+│       │   ├── auth-service
+│       │   │   ├── replica-patch.yaml
+│       │   │   └── service-type-patch.yaml
+│       │   ├── data-service
+│       │   │   ├── replica-patch.yaml
+│       │   │   └── service-type-patch.yaml
+│       │   ├── gateway
+│       │   │   └── replica-patch.yaml
+│       │   └── kustomization.yaml
+│       └── prod
+│           ├── auth-service
+│           │   ├── replica-patch.yaml
+│           │   ├── service-account-patch.yaml
+│           │   ├── logger-patch.yaml
+│           │   └── debug-sidecar-patch.yaml
+│           ├── data-service
+│           │   ├── replica-patch.yaml
+│           │   └── debug-sidecar-patch.yaml
+│           ├── gateway
+│           │   └── replica-patch.yaml
+│           └── kustomization.yaml
+```
