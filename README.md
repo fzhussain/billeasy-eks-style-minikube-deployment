@@ -61,6 +61,7 @@ cd billeasy-eks-style-minikube-deployment/
 ```
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
 
+### Project structure:
 ```
 .
 ├── README.md
@@ -168,7 +169,9 @@ Note: In my case it is: **192.168.59.112**
 
 ## Part 1: Microservice Stack - Testing
 
-### 1. Accessing Gateway via Ingress:
+### 1. Gateway via Ingress
+What: Public entrypoint to the services
+Why: Mimics ALB/Ingress on EKS
 Open in browser: [http://faraz.billeasy.com/](http://faraz.billeasy.com/)
 ![gateway ingress](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/7.%20Testing%20ingress-gateway.png)
 
@@ -189,25 +192,12 @@ Open in browser: [http://localhost:8082/](http://localhost:8082/)
 ![auth service](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/9.%20Testing%20data-service.png)
 
 ### Hence we demonstated the following:
-- ### Health Monitoring
-    - Liveness probes configured to detect and restart unhealthy containers
-    - Readiness probes implemented to ensure traffic only reaches ready pods
-
-- ### Resource Management
-    - Proper resource requests and limits defined for all containers
-    - CPU and memory requirements specified to ensure stable operation
-
-- ### Networking Configuration
-    - Gateway service exposed publicly via:
-        - Ingress controller with appropriate routing rules
-        - External access properly configured
-
-    - Internal-only services:
-        - auth-service restricted to cluster-internal access
-        - data-service restricted to cluster-internal access
+- Readiness/Liveness probes ensure healthy containers.
+- ClusterIP exposure restricts internal-only access.
+- Ingress + RBAC + Namespace isolation reflects real-world cloud environments.
 
 ## Part 2: Simulate IAM with MinIO
-
+### Use MinIO to mimic S3-based IAM behaviors
 We already have our minio deployment and service created when we applied the kustomize/overlay/prod 
 - Verify once again:
 ```bash
@@ -226,6 +216,9 @@ Open in browser: [http://localhost:9001/](http://localhost:9001/)
 ```bash
 kubectl port-forward service/prod-faraz-minio -n minio-storage 9000:9000
 ```
+
+- MinIO allows us to simulate cloud IAM + bucket policies.
+- RBAC ensures only the data-service can access secrets.
 
 ### Verify RBAC
 ```bash
@@ -310,6 +303,14 @@ kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c deb
 
 This is because the network policy (prod/dev)allow-only-data-service allows only data service to communicate to minio pods.
 
+- auth-service fails the check
+- data-service passes (and can access MinIO)
+
+#### Simulated Attack:
+- Deliberately expose credentials to auth-service.
+- Observe failure to connect due to NetworkPolicy blocking.
+- Proves defense in depth: even if secrets leak, network barriers save us.
+
 #### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
 
 NOTE for future improvements: 
@@ -330,7 +331,8 @@ kubectl get pods -n system -o wide --show-labels
 
 ![Listing pods with labels](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/20.%20system%20ns%20pods%20show%20labels.png)
 
-- Simulating auth leaks:
+- Simulate logging of Authorization headers:
+    - This tests if confidential headers get logged accidentally.
 
 ```bash
 curl -H "Authorization: Bearer faraz-secret-token-123" http://localhost:8081/headers
@@ -372,7 +374,7 @@ kubectl apply -k kustomize/overlays/prod/
 
 Now the external access to auth-service is blocked using Network Policies and auth-service should be able to communicate to data-service only.
 
-### Using Kyverno to block/detect if deployment logs Authorization headers
+### Policy Enforcement using Kyverno
 - Install Kyverno:
 ```bash
 helm repo add kyverno https://kyverno.github.io/kyverno/
@@ -387,7 +389,9 @@ helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
   
 ![verify kyverno install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/27.%20Verify%20install.png)
 
-- Create and apply the cluster policy:
+- Enforce that Authorization headers cannot be logged:
+    - Prevent developers from pushing insecure code
+    - Act as a compliance-as-code layer
 
 ```bash
 kubectl apply -f kustomize/base/clusterpolicies/prevent-auth-header-logging.yaml
@@ -400,7 +404,7 @@ kubectl apply -k kustomize/overlays/prod/
 ```
 
 ![cluster policy applied and tested](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/28.%20Auth-leak-kyverno-policy.png)
-
+- Rejected if deployment logs %({Authorization}i)s
 #### Hence, the kyverno policy which we created successfully blocks the creation of deployment if the deployment contains %({Authorization}i)s
 
 - Reapplying after fixing:
@@ -410,9 +414,14 @@ kubectl apply -k kustomize/overlays/prod/
 ### We sucessfully demonstated security leaks and fixed the incident.
 
 
-## Part 4: Observability
+## Part 4: Observability with Prometheus & Grafana
 
-- Install prometheus and grafana via helm
+- Install monitoring stack using Helm
+    - Monitor real-time metrics and visualize:
+    - Pod CPU/memory usage
+    - Network traffic
+    - App health
+
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
