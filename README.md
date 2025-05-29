@@ -30,7 +30,7 @@ Install the following tools:
 - kyverno
 
 ## Minikube Cluster Initialization
-### What: Start Minikube with appropriate add-ons
+### Start Minikube with appropriate add-ons
 
 ```bash
 minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --cni calico --no-vtx-check
