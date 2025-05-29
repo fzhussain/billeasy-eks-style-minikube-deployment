@@ -1,7 +1,8 @@
 
 # DevOps Technical Task: Simulated EKS-Style Secure Deployment Using Minikube
 
-Overview
+Overview:
+
 This project simulates a production-style microservices deployment on a local Kubernetes cluster using Minikube. The goal is to reflect AWS EKS patterns with a strong emphasis on infrastructure security, observability, IAM controls, and incident response.
 
 The solution demonstrates:
@@ -29,6 +30,7 @@ Install the following tools:
 - kyverno
 
 ## Minikube Cluster Initialization
+### Start Minikube with appropriate add-ons
 
 ```bash
 minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --cni calico --no-vtx-check
@@ -42,13 +44,24 @@ kubectl get nodes
 
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/2.%20kubectl%20get%20all.png)
 
+Why:
+- We mimic EKS behavior locally, including:
+    - Ingress for external routing
+    - Metrics Server for pod-level metrics
+    - Calico CNI for enforcing Network Policies
+
+How:
+- Allocate enough CPU/RAM for observability and app services.
+- Ensure Calico enables network isolation via NetworkPolicies.
 
 ## Clone the repository
 ```bash
 git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.git
+cd billeasy-eks-style-minikube-deployment/
 ```
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
 
+### Project structure:
 ```
 .
 ├── README.md
@@ -68,7 +81,8 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
     │   │       ├── deployment.yaml      
     │   │       ├── service.yaml         
     │   │       ├── ingress.yaml          
-    │   │       └── kustomization.yaml    
+    │   │       └── kustomization.yaml
+    |   |
     │   ├── infra                         
     │   │   └── minio                     
     │   │       ├── minio-deployment.yaml       
@@ -77,12 +91,15 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
     │   ├── network-policies                      
     │   │   ├── auth-to-data-only.yaml             
     │   │   └── minio-access-policy.yaml
+    |   |
     │   ├── cluster-policies                                   
-    │   │   └── prevent-auth-header-logging.yaml  
+    │   │   └── prevent-auth-header-logging.yaml
+    |   |
     │   ├── namespaces                  
     │   │   ├── application-namespace.yaml       
     │   │   ├── minio-namespace.yaml     
-    │   │   └── system-namespace.yaml     
+    │   │   └── system-namespace.yaml
+    |   |
     │   ├── rbac                       
     │   │   ├── minio-secret-reader-role.yaml      
     │   │   └── minio-secret-reader-rolebinding.yaml  
@@ -99,11 +116,14 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
         │   ├── auth-service
         │   │   ├── replica-patch.yaml
         │   │   └── service-type-patch.yaml
+        |   |
         │   ├── data-service
         │   │   ├── replica-patch.yaml
         │   │   └── service-type-patch.yaml
+        |   |
         │   ├── gateway
         │   │   └── replica-patch.yaml
+        |   |
         │   └── kustomization.yaml
         └── prod
             ├── auth-service
@@ -111,22 +131,35 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
             │   ├── service-account-patch.yaml
             │   ├── logger-patch.yaml
             │   └── debug-sidecar-patch.yaml
+            |    
             ├── data-service
             │   ├── replica-patch.yaml
             │   └── debug-sidecar-patch.yaml
+            |
             ├── gateway
             │   └── replica-patch.yaml
+            |
             └── kustomization.yaml
 ```
 
 ## Apply the kustomize overlay to create resources 
+
+### Apply secure production deployment
 ```bash
 kubectl apply -k kustomize/overlays/prod/
 ```
 ![kubectl apply -k](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/4.%20kubectl%20apply%20-k.png)
 
+- Why:
+    - The prod overlay applies:
+        - Secure namespace segmentation
+        -  Resource constraints
+        -  Sidecar debug tools for observability
+        -  Patch files for service accounts & ingress routing
+
 ### Verify your resource creations
 
+#### How to Verify:
 ```bash
 kubectl get all -n application
 kubectl get all -n system
@@ -138,7 +171,7 @@ kubectl get ingress -n application
 ```bash
 sudo vim /etc/hosts
 ```
-#### Make sure you add proper minikube IP to /etc/hosts
+#### Ensure /etc/hosts maps your Minikube IP to faraz.billeasy.com.
 Note: In my case it is: **192.168.59.112**
 
 ![sudo vim /etc/hosts](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/6.%20Edit%20the%20etc%20hosts.png)
@@ -146,7 +179,9 @@ Note: In my case it is: **192.168.59.112**
 
 ## Part 1: Microservice Stack - Testing
 
-### 1. Accessing Gateway via Ingress:
+### 1. Gateway via Ingress
+What: Public entrypoint to the services
+Why: Mimics ALB/Ingress on EKS
 Open in browser: [http://faraz.billeasy.com/](http://faraz.billeasy.com/)
 ![gateway ingress](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/7.%20Testing%20ingress-gateway.png)
 
@@ -167,25 +202,12 @@ Open in browser: [http://localhost:8082/](http://localhost:8082/)
 ![auth service](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/9.%20Testing%20data-service.png)
 
 ### Hence we demonstated the following:
-- ### Health Monitoring
-    - Liveness probes configured to detect and restart unhealthy containers
-    - Readiness probes implemented to ensure traffic only reaches ready pods
-
-- ### Resource Management
-    - Proper resource requests and limits defined for all containers
-    - CPU and memory requirements specified to ensure stable operation
-
-- ### Networking Configuration
-    - Gateway service exposed publicly via:
-        - Ingress controller with appropriate routing rules
-        - External access properly configured
-
-    - Internal-only services:
-        - auth-service restricted to cluster-internal access
-        - data-service restricted to cluster-internal access
+- Readiness/Liveness probes ensure healthy containers.
+- ClusterIP exposure restricts internal-only access.
+- Ingress + RBAC + Namespace isolation reflects real-world cloud environments.
 
 ## Part 2: Simulate IAM with MinIO
-
+### Use MinIO to mimic S3-based IAM behaviors
 We already have our minio deployment and service created when we applied the kustomize/overlay/prod 
 - Verify once again:
 ```bash
@@ -204,6 +226,9 @@ Open in browser: [http://localhost:9001/](http://localhost:9001/)
 ```bash
 kubectl port-forward service/prod-faraz-minio -n minio-storage 9000:9000
 ```
+
+- MinIO allows us to simulate cloud IAM + bucket policies.
+- RBAC ensures only the data-service can access secrets.
 
 ### Verify RBAC
 ```bash
@@ -288,6 +313,14 @@ kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c deb
 
 This is because the network policy (prod/dev)allow-only-data-service allows only data service to communicate to minio pods.
 
+- auth-service fails the check
+- data-service passes (and can access MinIO)
+
+#### Simulated Attack:
+- Deliberately expose credentials to auth-service.
+- Observe failure to connect due to NetworkPolicy blocking.
+- Proves defense in depth: even if secrets leak, network barriers save us.
+
 #### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
 
 NOTE for future improvements: 
@@ -308,7 +341,8 @@ kubectl get pods -n system -o wide --show-labels
 
 ![Listing pods with labels](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/20.%20system%20ns%20pods%20show%20labels.png)
 
-- Simulating auth leaks:
+- Simulate logging of Authorization headers:
+    - This tests if confidential headers get logged accidentally.
 
 ```bash
 curl -H "Authorization: Bearer faraz-secret-token-123" http://localhost:8081/headers
@@ -350,7 +384,7 @@ kubectl apply -k kustomize/overlays/prod/
 
 Now the external access to auth-service is blocked using Network Policies and auth-service should be able to communicate to data-service only.
 
-### Using Kyverno to block/detect if deployment logs Authorization headers
+### Policy Enforcement using Kyverno
 - Install Kyverno:
 ```bash
 helm repo add kyverno https://kyverno.github.io/kyverno/
@@ -365,7 +399,9 @@ helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
   
 ![verify kyverno install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/27.%20Verify%20install.png)
 
-- Create and apply the cluster policy:
+- Enforce that Authorization headers cannot be logged:
+    - Prevent developers from pushing insecure code
+    - Act as a compliance-as-code layer
 
 ```bash
 kubectl apply -f kustomize/base/clusterpolicies/prevent-auth-header-logging.yaml
@@ -378,7 +414,7 @@ kubectl apply -k kustomize/overlays/prod/
 ```
 
 ![cluster policy applied and tested](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/28.%20Auth-leak-kyverno-policy.png)
-
+- Rejected if deployment logs %({Authorization}i)s
 #### Hence, the kyverno policy which we created successfully blocks the creation of deployment if the deployment contains %({Authorization}i)s
 
 - Reapplying after fixing:
@@ -386,3 +422,57 @@ kubectl apply -k kustomize/overlays/prod/
 ![Removed leaks](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/30.%20Testing%20after%20fixing%20auth-leak.png)
 
 ### We sucessfully demonstated security leaks and fixed the incident.
+
+
+## Part 4: Observability with Prometheus & Grafana
+
+- Install monitoring stack using Helm
+    - Monitor real-time metrics and visualize:
+    - Pod CPU/memory usage
+    - Network traffic
+    - App health
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace 
+```
+
+![add prom grafana](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/31.%20helm%20add%20prom.png)
+
+![install prom grafana](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/31.%20helm%20install%20prom.png)
+
+- Verfiy your install:
+```bash
+kubectl get all  -n monitoring
+```
+![verify install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/32.%20Verify%20monitoring%20install.png)
+
+- Port forwarding to access Prometheus and Grafana via UI"
+For Prometheus:
+```bash
+kubectl port-forward service/prometheus-operated 9090 -n monitoring
+```
+Open in browser: [http://localhost:9090/query](http://localhost:9090/query)
+
+![open prom on web](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/33.%20Port%20forward%20and%20open%20prom%20on%20web.png)
+
+For Grafana:
+```bash
+kubectl port-forward service/monitoring-grafana -n monitoring 3000:80
+```
+
+- Enter Default credentials:
+    - username: admin
+    - password: prom-operator
+
+Open in browser: [http://localhost:3000/](http://localhost:3000/)
+![open grafana on web](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/34.%20Port%20forward%20and%20open%20grafana%20on%20web.png)
+
+- Verify your Grafana is connected to your data source (Prometheus)
+
+![verify grafana to prom](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/35.%20Verify%20prom%20connection%20with%20grafana.png)
+
+
