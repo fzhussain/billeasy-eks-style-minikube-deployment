@@ -472,6 +472,7 @@ Open in browser: [http://localhost:3000/](http://localhost:3000/)
 ![open grafana on web](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/34.%20Port%20forward%20and%20open%20grafana%20on%20web.png)
 
 - Verify your Grafana is connected to your data source (Prometheus)
+
 ![verify grafana to prom](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/35.%20Verify%20prom%20connection%20with%20grafana.png)
 
 
