@@ -81,7 +81,8 @@ cd billeasy-eks-style-minikube-deployment/
     │   │       ├── deployment.yaml      
     │   │       ├── service.yaml         
     │   │       ├── ingress.yaml          
-    │   │       └── kustomization.yaml    
+    │   │       └── kustomization.yaml
+    |   |
     │   ├── infra                         
     │   │   └── minio                     
     │   │       ├── minio-deployment.yaml       
@@ -90,12 +91,15 @@ cd billeasy-eks-style-minikube-deployment/
     │   ├── network-policies                      
     │   │   ├── auth-to-data-only.yaml             
     │   │   └── minio-access-policy.yaml
+    |   |
     │   ├── cluster-policies                                   
-    │   │   └── prevent-auth-header-logging.yaml  
+    │   │   └── prevent-auth-header-logging.yaml
+    |   |
     │   ├── namespaces                  
     │   │   ├── application-namespace.yaml       
     │   │   ├── minio-namespace.yaml     
-    │   │   └── system-namespace.yaml     
+    │   │   └── system-namespace.yaml
+    |   |
     │   ├── rbac                       
     │   │   ├── minio-secret-reader-role.yaml      
     │   │   └── minio-secret-reader-rolebinding.yaml  
@@ -112,11 +116,14 @@ cd billeasy-eks-style-minikube-deployment/
         │   ├── auth-service
         │   │   ├── replica-patch.yaml
         │   │   └── service-type-patch.yaml
+        |   |
         │   ├── data-service
         │   │   ├── replica-patch.yaml
         │   │   └── service-type-patch.yaml
+        |   |
         │   ├── gateway
         │   │   └── replica-patch.yaml
+        |   |
         │   └── kustomization.yaml
         └── prod
             ├── auth-service
@@ -124,11 +131,14 @@ cd billeasy-eks-style-minikube-deployment/
             │   ├── service-account-patch.yaml
             │   ├── logger-patch.yaml
             │   └── debug-sidecar-patch.yaml
+            |    
             ├── data-service
             │   ├── replica-patch.yaml
             │   └── debug-sidecar-patch.yaml
+            |
             ├── gateway
             │   └── replica-patch.yaml
+            |
             └── kustomization.yaml
 ```
 
