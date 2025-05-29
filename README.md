@@ -71,29 +71,28 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
     │   │       └── kustomization.yaml    
     │   ├── infra                         
     │   │   └── minio                     
-    │   │       ├── deployment.yaml       
-    │   │       ├── service.yaml          
-    │   │       ├── secret.yaml           
-    │   │       └── kustomization.yaml    
-    │   ├── policies                      
-    │   │   ├── networkpolicy.yaml       
-    │   │   ├── kyverno-policy.yaml       
-    │   │   └── kustomization.yaml       
+    │   │       ├── minio-deployment.yaml       
+    │   │       └── minio-service.yaml          
+    │   │                  
+    │   ├── network-policies                      
+    │   │   ├── auth-to-data-only.yaml             
+    │   │   └── minio-access-policy.yaml
+    │   ├── cluster-policies                                   
+    │   │   └── prevent-auth-header-logging.yaml  
     │   ├── namespaces                  
-    │   │   ├── app-namespace.yaml       
+    │   │   ├── application-namespace.yaml       
     │   │   ├── minio-namespace.yaml     
     │   │   └── system-namespace.yaml     
     │   ├── rbac                       
     │   │   ├── minio-secret-reader-role.yaml      
-    │   │   ├── minio-secret-reader-rolebinding.yaml  
-    │   │   └── kustomization.yaml
+    │   │   └── minio-secret-reader-rolebinding.yaml  
+    │   │   
     │   ├── secrets                       
-    │   │   ├── minio-credentials.yaml    
-    │   │   └── kustomization.yaml
+    │   │   └── minio-credentials.yaml    
+    │   │    
     │   └── serviceaccounts               
     │       ├── auth-service-sa.yaml     
-    │       ├── data-service-sa.yaml      
-    │       └── kustomization.yaml
+    │       └── data-service-sa.yaml       
     |
     └── overlays
         ├── dev
