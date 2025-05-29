@@ -1,7 +1,8 @@
 
 # DevOps Technical Task: Simulated EKS-Style Secure Deployment Using Minikube
 
-Overview
+Overview:
+
 This project simulates a production-style microservices deployment on a local Kubernetes cluster using Minikube. The goal is to reflect AWS EKS patterns with a strong emphasis on infrastructure security, observability, IAM controls, and incident response.
 
 The solution demonstrates:
@@ -29,6 +30,7 @@ Install the following tools:
 - kyverno
 
 ## Minikube Cluster Initialization
+### What: Start Minikube with appropriate add-ons
 
 ```bash
 minikube start --driver=virtualbox --cpus=4 --memory=8192 --addons=ingress,metrics-server --cni calico --no-vtx-check
@@ -42,6 +44,15 @@ kubectl get nodes
 
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/2.%20kubectl%20get%20all.png)
 
+Why:
+- We mimic EKS behavior locally, including:
+    - Ingress for external routing
+    - Metrics Server for pod-level metrics
+    - Calico CNI for enforcing Network Policies
+
+How:
+- Allocate enough CPU/RAM for observability and app services.
+- Ensure Calico enables network isolation via NetworkPolicies.
 
 ## Clone the repository
 ```bash
