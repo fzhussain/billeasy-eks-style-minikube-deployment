@@ -476,3 +476,36 @@ Open in browser: [http://localhost:3000/](http://localhost:3000/)
 ![verify grafana to prom](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/35.%20Verify%20prom%20connection%20with%20grafana.png)
 
 
+#### Creating Panels and dashboard:
+
+##### 1. POD CPU Usage:
+![CPU Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/36.%20POD%20CPU%20usage.png)
+
+##### 2. POD memory Usage:
+![Memory Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/37.%20POD%20memory%20usage.png)
+
+##### 3. Pod Restarts:
+- Simulating Restart:
+![Restart Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/39.%20Simulating%20restart.png)
+- Panel:
+![Restart Panel Demo 1](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/40.%20Corresponding%20restart%20dashboard.png)
+
+![Restart Panel Demo 2](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/41.%20Corresponding%20restart.png)
+
+##### Dashboard:
+![Dashboard Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/38.%20Dashboard%20CPU%20Memory%20Restarts.png)
+
+- Future Improvements:
+    - Create metrics for HTTP request rates and errors
+    - Setup Alerts via Prometheus Alert Manager   
+
+## Part 5: Failure Simulation
+
+#### Simulate a partial failure:
+
+![Auto healing](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/42.%20Auth%20heal%20simulation.png)
+
+##### As you can see, even when the pod was deleted, the pod is recovered via ReplicaSet
+
+##### We can also see a spike in Grafana dashboard
+![Grafana spike](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/43.%20Spike%20on%20graph%20after%20deletion.png)
