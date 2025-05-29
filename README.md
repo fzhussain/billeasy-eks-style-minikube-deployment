@@ -152,10 +152,10 @@ kubectl apply -k kustomize/overlays/prod/
 
 - Why:
     - The prod overlay applies:
-    - Secure namespace segmentation
-    -  Resource constraints
-    -  Sidecar debug tools for observability
-    -  Patch files for service accounts & ingress routing
+        - Secure namespace segmentation
+        -  Resource constraints
+        -  Sidecar debug tools for observability
+        -  Patch files for service accounts & ingress routing
 
 ### Verify your resource creations
 
