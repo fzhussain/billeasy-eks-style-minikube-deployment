@@ -57,6 +57,7 @@ How:
 ## Clone the repository
 ```bash
 git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.git
+cd billeasy-eks-style-minikube-deployment/
 ```
 ![kubectl get nodes](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/3.%20Clone%20and%20project%20structure.png)
 
@@ -131,13 +132,23 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
 ```
 
 ## Apply the kustomize overlay to create resources 
+
+### Apply secure production deployment
 ```bash
 kubectl apply -k kustomize/overlays/prod/
 ```
 ![kubectl apply -k](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/4.%20kubectl%20apply%20-k.png)
 
+- Why:
+    - The prod overlay applies:
+    - Secure namespace segmentation
+    -  Resource constraints
+    -  Sidecar debug tools for observability
+    -  Patch files for service accounts & ingress routing
+
 ### Verify your resource creations
 
+#### How to Verify:
 ```bash
 kubectl get all -n application
 kubectl get all -n system
@@ -149,7 +160,7 @@ kubectl get ingress -n application
 ```bash
 sudo vim /etc/hosts
 ```
-#### Make sure you add proper minikube IP to /etc/hosts
+#### Ensure /etc/hosts maps your Minikube IP to faraz.billeasy.com.
 Note: In my case it is: **192.168.59.112**
 
 ![sudo vim /etc/hosts](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/6.%20Edit%20the%20etc%20hosts.png)
