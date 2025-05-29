@@ -386,3 +386,51 @@ kubectl apply -k kustomize/overlays/prod/
 ![Removed leaks](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/30.%20Testing%20after%20fixing%20auth-leak.png)
 
 ### We sucessfully demonstated security leaks and fixed the incident.
+
+
+## Part 4: Observability
+
+- Install prometheus and grafana via helm
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace 
+```
+
+![add prom grafana](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/31.%20helm%20add%20prom.png)
+
+![install prom grafana](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/31.%20helm%20install%20prom.png)
+
+- Verfiy your install:
+```bash
+kubectl get all  -n monitoring
+```
+![verify install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/32.%20Verify%20monitoring%20install.png)
+
+- Port forwarding to access Prometheus and Grafana via UI"
+For Prometheus:
+```bash
+kubectl port-forward service/prometheus-operated 9090 -n monitoring
+```
+Open in browser: [http://localhost:9090/query](http://localhost:9090/query)
+
+![open prom on web](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/33.%20Port%20forward%20and%20open%20prom%20on%20web.png)
+
+For Grafana:
+```bash
+kubectl port-forward service/monitoring-grafana -n monitoring 3000:80
+```
+
+- Enter Default credentials:
+    - username: admin
+    - password: prom-operator
+
+Open in browser: [http://localhost:3000/](http://localhost:3000/)
+![open grafana on web](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/34.%20Port%20forward%20and%20open%20grafana%20on%20web.png)
+
+- Verify your Grafana is connected to your data source (Prometheus)
+![verify grafana to prom](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/35.%20Verify%20prom%20connection%20with%20grafana.png)
+
+
