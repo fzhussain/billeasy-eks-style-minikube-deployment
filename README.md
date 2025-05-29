@@ -516,6 +516,5 @@ Open in browser: [http://localhost:3000/](http://localhost:3000/)
 
 ---
 
-**Note:**  
-I’ve put this guide together based on my current understanding of **Kubernetes**.  
-It’s a work in progress, and I’ll keep refining it as I learn more.😇
+**Closing Note:**  
+I’ve put this guide together based on my current understanding of **Kubernetes**. It’s a work in progress, and I’ll keep refining it as I learn more.😇
