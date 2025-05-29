@@ -426,11 +426,7 @@ kubectl apply -k kustomize/overlays/prod/
 
 ## Part 4: Observability with Prometheus & Grafana
 
-- Install monitoring stack using Helm
-    - Monitor real-time metrics and visualize:
-    - Pod CPU/memory usage
-    - Network traffic
-    - App health
+- Add and update the Prometheus Helm chart repository:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -445,6 +441,8 @@ helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring
 ![install prom grafana](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/31.%20helm%20install%20prom.png)
 
 - Verfiy your install:
+    - Check all resources deployed in the monitoring namespace:
+       
 ```bash
 kubectl get all  -n monitoring
 ```
@@ -477,7 +475,8 @@ Open in browser: [http://localhost:3000/](http://localhost:3000/)
 
 
 #### Creating Panels and dashboard:
-
+- Use Prometheus queries to create insightful panels:
+  
 ##### 1. POD CPU Usage:
 ![CPU Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/36.%20POD%20CPU%20usage.png)
 
@@ -492,20 +491,31 @@ Open in browser: [http://localhost:3000/](http://localhost:3000/)
 
 ![Restart Panel Demo 2](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/41.%20Corresponding%20restart.png)
 
-##### Dashboard:
+##### Complete Dashboard Sample:
 ![Dashboard Usage](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/38.%20Dashboard%20CPU%20Memory%20Restarts.png)
 
-- Future Improvements:
-    - Create metrics for HTTP request rates and errors
-    - Setup Alerts via Prometheus Alert Manager   
+- Future Enhancements
+    - Monitor HTTP request rates and error counts
+    - Integrate Prometheus Alertmanager for:
+        - Custom alert rules
+        - Email or Slack notifications  
 
 ## Part 5: Failure Simulation
 
 #### Simulate a partial failure:
+- When a pod is deleted, the ReplicaSet ensures the pod is automatically recreated, demonstrating Kubernetes' self-healing capability.
 
 ![Auto healing](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/42.%20Auth%20heal%20simulation.png)
 
 ##### As you can see, even when the pod was deleted, the pod is recovered via ReplicaSet
 
-##### We can also see a spike in Grafana dashboard
+##### A visible spike in CPU and memory usage, can be observed in the Grafana dashboard after pod deletion.
 ![Grafana spike](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/43.%20Spike%20on%20graph%20after%20deletion.png)
+
+
+
+---
+
+**Note:**  
+I’ve put this guide together based on my current understanding of **Kubernetes observability**.  
+It’s a work in progress, and I’ll keep refining it as I learn more.
