@@ -52,67 +52,71 @@ git clone https://github.com/fzhussain/billeasy-eks-style-minikube-deployment.gi
 ```
 .
 ├── README.md
-├── kustomize
-│   ├── kustomization.yaml
-│   ├── clusterpolicies
-│   │   └── prevent-auth-header-logging.yaml
-│   ├── infra
-│   │   └── minio
-│   │       ├── minio-deployment.yaml
-│   │       └── minio-service.yaml
-│   ├── microservice
-│   │   ├── auth-service
-│   │   │   ├── deployment.yaml
-│   │   │   ├── service.yaml
-│   │   │   └── kustomization.yaml
-│   │   └── data-service
-│   │       ├── deployment.yaml
-│   │       ├── service.yaml
-│   │       └── kustomization.yaml
-│   ├── policies
-│   │   ├── networkpolicy.yaml
-│   │   ├── kyverno-policy.yaml
-│   │   └── kustomization.yaml
-│   ├── base
-│   │   ├── namespaces
-│   │   │   ├── application-namespace.yaml
-│   │   │   ├── minio-namespace.yaml
-│   │   │   └── system-namespace.yaml
-│   │   ├── network-policies
-│   │   │   ├── auth-to-data-only.yaml
-│   │   │   ├── default-deny-all.yaml
-│   │   │   └── minio-access-policy.yaml
-│   │   ├── rbac
-│   │   │   ├── minio-secret-reader-role.yaml
-│   │   │   └── minio-secret-reader-role-binding.yaml
-│   │   ├── secrets
-│   │   │   └── minio-credentials-system-ns.yaml
-│   │   └── serviceaccounts
-│   │       ├── auth-service-service-account.yaml
-│   │       └── data-service-service-account.yaml
-├── overlays
-│   ├── dev
-│   │   ├── auth-service
-│   │   │   ├── replica-patch.yaml
-│   │   │   └── service-type-patch.yaml
-│   │   ├── data-service
-│   │   │   ├── replica-patch.yaml
-│   │   │   └── service-type-patch.yaml
-│   │   ├── gateway
-│   │   │   └── replica-patch.yaml
-│   │   └── kustomization.yaml
-│   └── prod
-│       ├── auth-service
-│       │   ├── replica-patch.yaml
-│       │   ├── service-account-patch.yaml
-│       │   ├── logger-patch.yaml
-│       │   └── debug-sidecar-patch.yaml
-│       ├── data-service
-│       │   ├── replica-patch.yaml
-│       │   └── debug-sidecar-patch.yaml
-│       ├── gateway
-│       │   └── replica-patch.yaml
-│       └── kustomization.yaml
+└── kustomize
+    ├── base                             
+    │   ├── kustomization.yaml            
+    │   ├── microservices                
+    │   │   ├── auth-service
+    │   │   │   ├── deployment.yaml       
+    │   │   │   ├── service.yaml          
+    │   │   │   └── kustomization.yaml    
+    │   │   ├── data-service
+    │   │   │   ├── deployment.yaml      
+    │   │   │   ├── service.yaml         
+    │   │   │   └── kustomization.yaml    
+    │   │   └── gateway
+    │   │       ├── deployment.yaml      
+    │   │       ├── service.yaml         
+    │   │       ├── ingress.yaml          
+    │   │       └── kustomization.yaml    
+    │   ├── infra                         
+    │   │   └── minio                     
+    │   │       ├── minio-deployment.yaml       
+    │   │       └── minio-service.yaml          
+    │   │                  
+    │   ├── network-policies                      
+    │   │   ├── auth-to-data-only.yaml             
+    │   │   └── minio-access-policy.yaml
+    │   ├── cluster-policies                                   
+    │   │   └── prevent-auth-header-logging.yaml  
+    │   ├── namespaces                  
+    │   │   ├── application-namespace.yaml       
+    │   │   ├── minio-namespace.yaml     
+    │   │   └── system-namespace.yaml     
+    │   ├── rbac                       
+    │   │   ├── minio-secret-reader-role.yaml      
+    │   │   └── minio-secret-reader-rolebinding.yaml  
+    │   │   
+    │   ├── secrets                       
+    │   │   └── minio-credentials.yaml    
+    │   │    
+    │   └── serviceaccounts               
+    │       ├── auth-service-sa.yaml     
+    │       └── data-service-sa.yaml       
+    |
+    └── overlays
+        ├── dev
+        │   ├── auth-service
+        │   │   ├── replica-patch.yaml
+        │   │   └── service-type-patch.yaml
+        │   ├── data-service
+        │   │   ├── replica-patch.yaml
+        │   │   └── service-type-patch.yaml
+        │   ├── gateway
+        │   │   └── replica-patch.yaml
+        │   └── kustomization.yaml
+        └── prod
+            ├── auth-service
+            │   ├── replica-patch.yaml
+            │   ├── service-account-patch.yaml
+            │   ├── logger-patch.yaml
+            │   └── debug-sidecar-patch.yaml
+            ├── data-service
+            │   ├── replica-patch.yaml
+            │   └── debug-sidecar-patch.yaml
+            ├── gateway
+            │   └── replica-patch.yaml
+            └── kustomization.yaml
 ```
 
 ## Apply the kustomize overlay to create resources 
@@ -284,9 +288,101 @@ kubectl exec -it prod-faraz-data-service-deploy-65b58dcfb-p8jfq -n system -c deb
 
 This is because the network policy (prod/dev)allow-only-data-service allows only data service to communicate to minio pods.
 
-### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
+#### Hence, proved that even if Auth-service is misconfigured, it is unable to communicate to Minio and only data-service can access minio and list the buckets.
 
 NOTE for future improvements: 
 - We can improve security by creating users (non-admin/root) and access via user/service account.
 - We should implement bucket policies. (Current Requirement)
 - Implement only data-service to mount credentials.
+
+
+## Part 3. Security Incident Simulation
+
+<Story of P1>
+
+- Listing the pods with their labels:
+
+```bash
+kubectl get pods -n system -o wide --show-labels
+```
+
+![Listing pods with labels](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/20.%20system%20ns%20pods%20show%20labels.png)
+
+- Simulating auth leaks:
+
+```bash
+curl -H "Authorization: Bearer faraz-secret-token-123" http://localhost:8081/headers
+
+curl -H "Authorization: Bearer faraz-token-098" http://localhost:8081/get
+```
+```bash
+kubectl logs -l app=faraz-auth-service -n system | grep Bearer
+```
+
+![Auth leak demo](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/21.%20Auth%20header%20leak%20in%20logs.png)
+
+- To solve this, we can manually remove the Auth headers from deployment:
+![Auth leak manual solved](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/23.%20Manually%20solve%20auth%20header%20leaks.png)
+
+- And after re-applying the changes, this auth leak was solved:
+![Auth leak manual solved test](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/24.%20Manually%20redacting%20auth%20header%20leaks.png)
+
+
+- Also, we noticed that auth-service can communicate to External services
+
+```bash
+kubectl exec -it prod-faraz-auth-service-deploy-669977d44d-5srg8 -c debug-tools -n system -- sh -c "wget -qO- http://prod-faraz-data-service-svc.system.svc.cluster.local:5678"
+
+kubectl exec -it prod-faraz-auth-service-deploy-669977d44d-5srg8 -c debug-tools -n system -- sh -c "wget -qO- https://www.google.com" 
+```
+![No egress configured](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/22.%20Auth%20service%20egress%20not%20configured.png)
+
+Hence, we enforce network policy to only allow auth-service communication to data service:
+
+```bash
+kubectl get netpol -A
+```
+If not active then:
+```bash
+kubectl apply -k kustomize/overlays/prod/
+```
+![egress configured](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/25.%20After%20configuring%20egress%20for%20auth-service.png)
+
+Now the external access to auth-service is blocked using Network Policies and auth-service should be able to communicate to data-service only.
+
+### Using Kyverno to block/detect if deployment logs Authorization headers
+- Install Kyverno:
+```bash
+helm repo add kyverno https://kyverno.github.io/kyverno/
+
+helm repo update
+
+helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
+```
+![Install kyverno](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/26.%20Install%20kyverno.png)
+
+- Verify install:
+  
+![verify kyverno install](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/27.%20Verify%20install.png)
+
+- Create and apply the cluster policy:
+
+```bash
+kubectl apply -f kustomize/base/clusterpolicies/prevent-auth-header-logging.yaml
+
+kubectl get clusterpolicy -o wide
+```
+
+```bash
+kubectl apply -k kustomize/overlays/prod/
+```
+
+![cluster policy applied and tested](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/28.%20Auth-leak-kyverno-policy.png)
+
+#### Hence, the kyverno policy which we created successfully blocks the creation of deployment if the deployment contains %({Authorization}i)s
+
+- Reapplying after fixing:
+
+![Removed leaks](https://github.com/fzhussain/billeasy-eks-style-minikube-deployment/blob/main/Screenshots%20for%20Readme.md/30.%20Testing%20after%20fixing%20auth-leak.png)
+
+### We sucessfully demonstated security leaks and fixed the incident.
