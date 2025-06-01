@@ -21,7 +21,7 @@ Objectives
 - Recover gracefully from simulated failures
 
 Video for reference:
-<div style="position: relative; padding-bottom: 56.19146722164412%; height: 0;"><iframe src="https://www.loom.com/embed/5c9d37b5438149049fecd13535f7362e?sid=d582c83b-e86d-4561-885d-0d02c8e9ad32" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+https://www.loom.com/share/5c9d37b5438149049fecd13535f7362e?sid=1b600dda-6a21-41a1-8d5e-3afdec9584ed
 
 ## Setup Instructions
 
